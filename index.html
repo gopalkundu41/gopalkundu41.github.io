@@ -2378,12 +2378,12 @@
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-close" onclick="toggleMenu()">✕</button>
-  <a onclick="showPage('home'); toggleMenu()">Home</a>
-  <a onclick="showPage('about'); toggleMenu()">About</a>
-  <a onclick="showPage('experience'); toggleMenu()">Experience</a>
-  <a onclick="showPage('projects'); toggleMenu()">Projects</a>
-  <a onclick="showPage('education'); toggleMenu()">Education</a>
-  <a onclick="showPage('contact'); toggleMenu()">Contact Me</a>
+  <a onclick="closeMenu(); showPage('home')">Home</a>
+  <a onclick="closeMenu(); showPage('about')">About</a>
+  <a onclick="closeMenu(); showPage('experience')">Experience</a>
+  <a onclick="closeMenu(); showPage('projects')">Projects</a>
+  <a onclick="closeMenu(); showPage('education')">Education</a>
+  <a onclick="closeMenu(); showPage('contact')">Contact Me</a>
 </div>
 
 <!-- ==================== HOME PAGE ==================== -->
@@ -3746,14 +3746,15 @@
     if (target) {
       const top = pageId === 'home' ? 0 : target.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top, behavior: 'smooth' });
-      const m = document.getElementById('mobileMenu'); if (m) m.classList.remove('open');
+      closeMenu();
     }
   }
 
   // ===== MOBILE MENU =====
-  function toggleMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
-  }
+  function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+  function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  window.addEventListener('resize', () => { if (window.innerWidth > 900) closeMenu(); });
 
   // ===== STAT NUMBERS (static) =====
   function animateCounters(elements) {
