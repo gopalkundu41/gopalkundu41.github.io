@@ -2333,6 +2333,11 @@
     html:not(.light) .btn-primary,html:not(.light) .sticky-cta{background:var(--navy);color:#fff;border:1px solid rgba(95,143,217,.5)}
     html:not(.light) .btn-primary:hover,html:not(.light) .sticky-cta:hover{background:#0a3d85;color:#fff}
     html.light .btn-primary:hover{background:#0a3d85}
+
+    /* ===== OWNER-ONLY PROJECT MANAGER ===== */
+    .pf-manage-toggle,.pf-manage{display:none!important}
+    body.owner .pf-manage-toggle{display:block!important}
+    body.owner .pf-manage.open{display:block!important}
   </style>
 </head>
 <body>
@@ -3029,7 +3034,7 @@
           <div class="pf-manage-title" id="pfFormTitle">Add a project</div>
           <div class="pf-manage-sub">Saved in this browser. Use Export to back up or to publish permanently (see <code>SAVED_PROJECTS</code> in the page script).</div>
         </div>
-        <button type="button" class="btn btn-ghost pf-sm" onclick="toggleManage(false)">Close ✕</button>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap"><button type="button" class="btn btn-ghost pf-sm" onclick="exitOwner()">Exit owner mode</button><button type="button" class="btn btn-ghost pf-sm" onclick="toggleManage(false)">Close ✕</button></div>
       </div>
       <div class="pf-form">
         <label>Title *<input id="pfTitle" class="form-input" placeholder="e.g. Folding E-Bike Frame" /></label>
@@ -3509,7 +3514,13 @@
   });
 
   // ----- add / manage -----
+  // Owner mode: the add/manage tools are hidden from visitors. Open  yoursite/#manage  once
+  // in your own browser to switch them on (remembered on this device only).
+  const isOwner = () => { try { return localStorage.getItem('gk_owner') === '1'; } catch (e) { return false; } };
+  function applyOwner() { document.body.classList.toggle('owner', isOwner()); }
+  function exitOwner() { try { localStorage.removeItem('gk_owner'); } catch (e) {} toggleManage(false); applyOwner(); }
   function toggleManage(on) {
+    if (on && !isOwner()) return;
     $('pfManage').classList.toggle('open', on); document.body.classList.toggle('manage', on);
     if (on) $('pfManage').scrollIntoView({ behavior: 'smooth', block: 'center' }); else resetForm();
   }
@@ -3571,7 +3582,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('#projectsGrid .project-card').forEach(c => c.setAttribute('data-static', '1'));
     readStatic(); renderAll();
-    if (location.hash === '#manage') { showPage('projects'); setTimeout(() => toggleManage(true), 400); }
+    if (location.hash === '#manage') { try { localStorage.setItem('gk_owner', '1'); } catch (e) {} }
+    applyOwner();
+    if (location.hash === '#manage' && isOwner()) { showPage('projects'); setTimeout(() => toggleManage(true), 400); }
   });
 
   // ===== IMAGE LIGHTBOX (click-to-zoom viewer) =====
