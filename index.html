@@ -2498,6 +2498,9 @@
     .pr-row.is-cert .pr-media,.pr-row.is-cert .pr-main{min-height:230px}
     .pr-row.is-cert .pr-main-img{object-fit:contain;background:var(--bg3);padding:10px}
     .pr-row.is-cert:hover .pr-main-img{transform:none}
+
+
+    #resumeLink{display:inline-flex;align-items:center;gap:.5rem;text-decoration:none}
   </style>
 </head>
 <body>
@@ -2559,6 +2562,7 @@
         <div class="hero-actions">
           <a href="mailto:gkundu41@gmail.com" class="btn btn-primary">Contact Me <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           <button class="btn btn-ghost" onclick="showPage('projects')">View Projects</button>
+          <a class="btn btn-ghost" id="resumeLink" href="Gopal-Kundu-Resume.pdf" download="Gopal-Kundu-Resume.pdf"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M5 20h14"/></svg> Resume</a>
         </div>
         <div class="hs-row">
           <div class="hs-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><div><div class="hs-num" data-target="7" data-suffix="+">7+</div><div class="hs-lab">Years Experience</div></div></div>
@@ -3464,6 +3468,12 @@
     if (location.hash === '#manage' && isOwner()) { showPage('projects'); }
   }
   document.addEventListener('DOMContentLoaded', bootProjects);
+
+  // Resume: hide the download section if the PDF is not in the repo yet (so visitors never hit a broken link).
+  (function () {
+    const a = document.getElementById('resumeLink'); if (!a) return;
+    fetch(a.getAttribute('href'), { method: 'HEAD', cache: 'no-store' }).then(r => { if (r.status === 404) a.style.display = 'none'; }).catch(() => {});
+  })();
 
   // ===== IMAGE LIGHTBOX (click-to-zoom viewer) =====
   (function () {
